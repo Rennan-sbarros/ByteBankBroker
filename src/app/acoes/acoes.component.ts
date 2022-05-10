@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { merge } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, filter } from 'rxjs/operators';
 
 import { AcoesService } from './acoes.service';
 
@@ -12,16 +12,10 @@ import { AcoesService } from './acoes.service';
 })
 export class AcoesComponent {
   acoesInput = new FormControl();
-  todaAcoes$ = this.acoesService.getAcoes().pipe(
-    tap(() => {
-      console.log('Fluxo inicial');
-    })
-  );
+  todaAcoes$ = this.acoesService.getAcoes().pipe();
 
   filtroPorInput$ = this.acoesInput.valueChanges.pipe(
-    tap(() => {
-      console.log('Fluxo do filtro');
-    }),
+    filter((valorDigitado) => valorDigitado.length >= 3 || !valorDigitado.length),
     switchMap((valorDigitado) => this.acoesService.getAcoes(valorDigitado))
   );
 
